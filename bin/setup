@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -e
+
+echo "Creating .env based on .env.example..."
+cp .env.example .env
+
+stty -echo
+read -p "Enter DB_PASSWORD: " DB_PASSWORD
+echo ""
+stty echo
+
+sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD='$DB_PASSWORD'|" .env
+
+echo "Generating secret key..."
+APP_SECRET_KEY=$(openssl rand -base64 50 | tr -d '\n')
+sed -i "s|^APP_SECRET_KEY=.*|APP_SECRET_KEY='$APP_SECRET_KEY'|" .env
+
+chmod +x backend/run.sh frontend/run.sh
+
+echo "Building service images..."
+docker compose build
+
+echo "Migrating database..."
+docker compose run --rm backend python manage.py migrate
+docker compose down
+
+echo "Done!"

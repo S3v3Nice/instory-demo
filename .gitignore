@@ -1,0 +1,5 @@
+.env
+docker/data/
+docker/nginx/acme/
+docker/nginx/certs/
+docker/nginx/html/
