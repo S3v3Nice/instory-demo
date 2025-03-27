@@ -20,6 +20,9 @@ chmod +x backend/run.sh frontend/run.sh
 echo "Building service images..."
 docker compose build
 
+echo "Collecting static files..."
+docker compose run --rm --no-deps backend python manage.py collectstatic --no-input
+
 echo "Migrating database..."
 docker compose run --rm backend python manage.py migrate
 docker compose down
