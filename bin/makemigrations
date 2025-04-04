@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -e
+
+MAKEMIGRATIONS_COMMAND="python manage.py makemigrations"
+
+echo "Running $MAKEMIGRATIONS_COMMAND..."
+
+CONTAINER_ID=$(docker compose ps -q backend)
+if [ -z "$CONTAINER_ID" ] || ! docker ps -q --no-trunc | grep -q "$CONTAINER_ID"; then
+    cleanup() {
+        docker compose down
+    }
+    trap cleanup EXIT
+
+  docker compose run --rm backend $MAKEMIGRATIONS_COMMAND
+else
+  docker compose exec -it backend $MAKEMIGRATIONS_COMMAND
+fi

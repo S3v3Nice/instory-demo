@@ -12,3 +12,9 @@ down:
 
 build:
 	docker compose build
+
+makemigrations:
+	sh bin/makemigrations
+
+migrate:
+	sh bin/migrate
