@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -e
+
+INSTALL_COMMAND="pip install $@ && pip freeze > requirements.txt"
+
+echo "Running $INSTALL_COMMAND..."
+
+CONTAINER_ID=$(docker compose ps -q backend)
+if [ -z "$CONTAINER_ID" ] || ! docker ps -q --no-trunc | grep -q "$CONTAINER_ID"; then
+    cleanup() {
+        docker compose down
+    }
+    trap cleanup EXIT
+
+    docker compose run --rm backend sh -c "$INSTALL_COMMAND"
+else
+    docker compose exec -it backend sh -c  "$INSTALL_COMMAND"
+fi
+
+docker compose build

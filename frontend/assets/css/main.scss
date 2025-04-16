@@ -1,0 +1,23 @@
+@layer theme, base, components, vuetify, app, utilities;
+
+@layer app {
+    :root {
+        --header-height: 3.5rem;
+        --header-margin: 1rem;
+        --header-with-margin-height: calc(var(--header-height) + var(--header-margin));
+        --nav-narrow-width: 72px;
+        --nav-medium-width: 244px;
+        --nav-wide-width: 335px;
+        --nav-mobile-height: 50px;
+        --btn-hover-color: rgb(var(--v-theme-surface-light));
+    }
+
+    * {
+        border-color: rgba(var(--v-border-color), var(--v-border-opacity));
+    }
+
+    .surface-ground {
+        /*noinspection CssUnresolvedCustomProperty*/
+        //background: var(--v-theme-background);
+    }
+}

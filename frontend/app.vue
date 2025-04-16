@@ -1,6 +1,23 @@
+<script setup>
+import NavBar from '~/components/partials/NavBar.vue'
+import MobileNavBar from '~/components/partials/MobileNavBar.vue'
+</script>
+
 <template>
-  <div>
-    <NuxtRouteAnnouncer />
-    <NuxtWelcome />
-  </div>
+    <NuxtLayout>
+        <v-app>
+            <NavBar class="max-sm:hidden"/>
+            <MobileNavBar class="sm:hidden"/>
+            <div
+                class="page max-sm:mb-[var(--nav-mobile-height)] sm:ml-[var(--nav-narrow-width)]
+                       xl:ml-[var(--nav-medium-width)] 2xl:ml-[var(--nav-wide-width)] p-10"
+            >
+                <NuxtPage/>
+            </div>
+        </v-app>
+    </NuxtLayout>
 </template>
+
+<style scoped>
+
+</style>
