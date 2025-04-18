@@ -14,10 +14,11 @@ export default defineNuxtConfig({
             setup(_options, nuxt) {
                 nuxt.hooks.hook('vite:extendConfig', (config) => {
                     // @ts-expect-error
-                    config.plugins.push(vuetify({autoImport: true, styles: { configFile: 'assets/css/vuetify.scss'}}))
+                    config.plugins.push(vuetify({autoImport: true, styles: {configFile: 'assets/css/vuetify.scss'}}))
                 })
             }
         }),
+        '@pinia/nuxt'
     ],
     css: [
         '~/assets/css/main.scss',

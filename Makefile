@@ -10,6 +10,9 @@ up:
 down:
 	docker compose down
 
+restart:
+	docker compose restart
+
 build:
 	docker compose build
 

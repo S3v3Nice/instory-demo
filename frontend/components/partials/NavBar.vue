@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import {useTheme} from 'vuetify'
 import 'vuetify/components'
+import {useThemeStore} from '~/stores/theme'
 
 interface Item {
     label: string
@@ -16,7 +16,7 @@ interface ExtraMenuItem {
     action?: () => void
 }
 
-const theme = useTheme()
+const themeStore = useThemeStore()
 const isMenuOpen = ref(false)
 const items = computed<Item[]>(() => [
     {label: 'Home', icon: 'mdi-home-outline'},
@@ -33,9 +33,9 @@ const extraItems = computed<ExtraMenuItem[]>(() => [
     },
     {
         label: 'Switch theme',
-        icon: theme.global.current.value.dark ? 'mdi-weather-night' : 'mdi-weather-sunny',
-        switchValue: theme.global.current.value.dark,
-        action: toggleTheme
+        icon: themeStore.isDark ? 'mdi-weather-night' : 'mdi-weather-sunny',
+        switchValue: themeStore.isDark,
+        action: themeStore.toggleTheme
     },
     {
         label: 'Log out',
@@ -43,10 +43,6 @@ const extraItems = computed<ExtraMenuItem[]>(() => [
         visible: true
     },
 ])
-
-function toggleTheme() {
-    theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark'
-}
 
 function onMenuItemClick(item: ExtraMenuItem) {
     if (item.action !== undefined) {
@@ -66,10 +62,14 @@ function onMenuItemClick(item: ExtraMenuItem) {
                    2xl:w-[var(--nav-wide-width)] px-2 py-7 border-r mr-5 h-full"
         >
             <NuxtLink :to="{name: 'index'}" class="h-[32px] px-4">
-                <img src="/logo-min.svg" alt="Logo" class="h-full block xl:hidden">
-                <img v-if="theme.global.current.value.dark" src="/logo-dark.svg" alt="Logo"
-                     class="h-full max-xl:hidden">
-                <img v-else src="/logo.svg" alt="Logo" class="h-full max-xl:hidden">
+                <template v-if="themeStore.isDark">
+                    <img src="/logo-dark.svg" alt="Logo" class="h-full max-xl:hidden">
+                    <img src="/logo-min-dark.svg" alt="Logo" class="h-full block xl:hidden">
+                </template>
+                <template v-else>
+                    <img src="/logo.svg" alt="Logo" class="h-full max-xl:hidden">
+                    <img src="/logo-min.svg" alt="Logo" class="h-full block xl:hidden">
+                </template>
             </NuxtLink>
 
             <div class="flex flex-col gap-1 mt-7">
