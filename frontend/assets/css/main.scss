@@ -12,12 +12,15 @@
         --btn-hover-color: rgb(var(--v-theme-surface-light));
     }
 
-    * {
+    .border, .border-l, .border-r, .border-b, .border-t {
         border-color: rgba(var(--v-border-color), var(--v-border-opacity));
     }
 
-    .surface-ground {
-        /*noinspection CssUnresolvedCustomProperty*/
-        //background: var(--v-theme-background);
+    /*
+     Making the background of overlays (e.g. Dialog) dark in a dark theme
+     (by default in Vuetify, it is light, not dark).
+    */
+    .v-overlay__scrim {
+        background-color: rgba(0, 0, 0, 1);
     }
 }

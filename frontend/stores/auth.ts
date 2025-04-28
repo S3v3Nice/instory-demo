@@ -3,14 +3,12 @@ import {defineStore} from 'pinia'
 
 interface AuthUser {
     isAuthenticated: boolean
-    isFetched: boolean
     user: User | null
 }
 
 export const useAuthStore = defineStore('auth', {
     state: (): AuthUser => ({
         isAuthenticated: false,
-        isFetched: false,
         user: null,
     }),
     getters: {
@@ -26,7 +24,15 @@ export const useAuthStore = defineStore('auth', {
     },
     actions: {
         async fetchUser() {
-            useFetch('/api/v1/auth/')
-        }
-    }
+            this.user = await $api<User>('/users/me/')
+            if (this.user) {
+                this.isAuthenticated = true
+            }
+        },
+
+        async reset() {
+            this.user = null
+            this.isAuthenticated = false
+        },
+    },
 })

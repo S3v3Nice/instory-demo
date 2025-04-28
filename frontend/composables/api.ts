@@ -1,0 +1,32 @@
+export const useApi = async (url: string, options: any = {}) => {
+    const csrfToken = useCookie('csrftoken')
+    const csrfMethods = ['POST', 'PUT', 'PATCH', 'DELETE']
+    const method = options.method ? options.method.toUpperCase() : 'GET'
+
+    return useFetch(url, {
+        baseURL: import.meta.client ? '/api/v1' : `http://backend:8000/api/v1`,
+        credentials: 'include',
+        headers: {
+            ...options.headers,
+            ...(csrfToken.value && csrfMethods.includes(method)
+                ? {'X-CSRFToken': csrfToken.value}
+                : {}),
+        },
+        ...options,
+    })
+}
+
+export const $api = $fetch.create({
+    baseURL: import.meta.client ? '/api/v1' : `http://backend:8000/api/v1`,
+    credentials: 'include',
+    responseType: 'json',
+    onRequest({options}) {
+        const csrfToken = useCookie('csrftoken')
+        const csrfMethods = ['POST', 'PUT', 'PATCH', 'DELETE']
+        const method = options.method ? options.method.toUpperCase() : 'GET'
+
+        if (csrfToken.value && csrfMethods.includes(method)) {
+            options.headers.set('X-CSRFToken', csrfToken.value)
+        }
+    },
+})

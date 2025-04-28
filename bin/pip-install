@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-INSTALL_COMMAND="pip install $@ && pip freeze > requirements.txt"
+INSTALL_COMMAND="pip install $@ --root-user-action=ignore && pip freeze > requirements.txt"
 
 echo "Running $INSTALL_COMMAND..."
 

@@ -11,7 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'avatar', 'first_name', 'last_name']
+        fields = ['id', 'username', 'email', 'avatar', 'first_name', 'last_name', 'followers', 'following']
 
     def get_email(self, obj):
         """Show email only to it's owner and superusers"""
@@ -25,7 +25,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_following(self, obj):
         if self.context.get('with_following', False):
-            return FollowingSerializer(obj.followers.all(), many=True).data
+            return FollowingSerializer(obj.following.all(), many=True).data
 
 
 class FollowerSerializer(serializers.ModelSerializer):

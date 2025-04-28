@@ -1,11 +1,13 @@
 <script setup>
 import NavBar from '~/components/partials/NavBar.vue'
 import MobileNavBar from '~/components/partials/MobileNavBar.vue'
+import GlobalToasts from '~/components/partials/GlobalToasts.vue'
 </script>
 
 <template>
     <NuxtLayout>
         <v-app>
+            <GlobalToasts/>
             <NavBar class="max-sm:hidden"/>
             <MobileNavBar class="sm:hidden"/>
             <div
