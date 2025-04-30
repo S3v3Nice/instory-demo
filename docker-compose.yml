@@ -83,3 +83,15 @@ services:
             interval: 5s
             timeout: 3s
             retries: 10
+
+    mailpit:
+        container_name: instory_mailpit
+        build:
+            context: .
+            dockerfile: docker/mailpit/Dockerfile
+        ports:
+            - "8025:8025"
+            - "1025:1025"
+        environment:
+            MP_SMTP_AUTH_ALLOW_INSECURE: 1
+        command: ash -c 'if [ "${APP_DEBUG}" = "true" ]; then /mailpit; fi'

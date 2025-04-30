@@ -23,6 +23,14 @@ export const useAuthStore = defineStore('auth', {
         following: (state: AuthUser) => state.user?.following,
     },
     actions: {
+        async fetchInitialUser() {
+            const response = await useApi('/users/me/')
+            this.user = response.data.value as User | null
+            if (this.user) {
+                this.isAuthenticated = true
+            }
+        },
+
         async fetchUser() {
             this.user = await $api<User>('/users/me/')
             if (this.user) {

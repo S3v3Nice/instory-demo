@@ -1,12 +1,17 @@
 from django.contrib.auth import login, logout
+from django.utils import timezone
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from users.emails import send_verification_email
 from users.forms import LoginForm, RegisterForm
 from users.models import User
 from users.serializers import UserSerializer
+from users.utils import EmailVerificationTokenGenerator
 
 
 class LoginView(APIView):
@@ -22,9 +27,9 @@ class LoginView(APIView):
 
         login(request, user)
         if remember_me:
-            request.session.set_expiry(2592000)  # 30 дней
+            request.session.set_expiry(2592000)  # 30 days
         else:
-            request.session.set_expiry(86400)  # 1 день
+            request.session.set_expiry(86400)  # 1 day
 
         return Response({'success': True}, status=status.HTTP_200_OK)
 
@@ -67,11 +72,32 @@ class RegisterView(APIView):
         user = User.objects.create_user(
             email=form.cleaned_data['email'],
             username=form.cleaned_data['username'],
-            password=form.cleaned_data['password'],
-            is_active=True
+            password=form.cleaned_data['password']
         )
 
         login(request, user)
         request.session.set_expiry(86400)
 
+        send_verification_email(user)
+
         return Response({'success': True}, status=status.HTTP_201_CREATED)
+
+
+class VerifyUserView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, uidb64, token):
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+
+            user = User.objects.get(pk=uid)
+        except Exception as e:
+            user = None
+
+        if user and EmailVerificationTokenGenerator().check_token(user, token):
+            user.date_verified_email = timezone.now()
+            user.save()
+
+            return Response(status=status.HTTP_200_OK)
+
+        return Response(status=status.HTTP_400_BAD_REQUEST)
