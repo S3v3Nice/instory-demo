@@ -17,7 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from users.views import LoginView, LogoutView, CurrentUserView, RegisterView, VerifyUserView
+from users.views import LoginView, LogoutView, CurrentUserView, RegisterView, EmailVerifyView, PasswordResetView, \
+    PasswordResetConfirmView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,5 +26,7 @@ urlpatterns = [
     path('api/v1/auth/logout/', LogoutView.as_view(), name='logout'),
     path('api/v1/auth/register/', RegisterView.as_view(), name='register'),
     path('api/v1/users/me/', CurrentUserView.as_view(), name='current_user'),
-    path('api/v1/email/verify/<uidb64>/<token>', VerifyUserView.as_view(), name='email.verify')
+    path('api/v1/email/verify/<uidb64>/<token>/', EmailVerifyView.as_view(), name='email.verify'),
+    path('api/v1/password/reset/', PasswordResetView.as_view(), name='password.reset'),
+    path('api/v1/password/reset/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password.reset.confirm'),
 ]

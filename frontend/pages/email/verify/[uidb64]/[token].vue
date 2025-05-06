@@ -7,7 +7,7 @@ const isLoading = ref(true)
 const isError = ref(false)
 
 onMounted(() => {
-    $api(`/email/verify/${uidb64}/${token}`, {
+    $api(`/email/verify/${uidb64}/${token}/`, {
         method: 'POST',
     }).catch((err) => {
         isError.value = true

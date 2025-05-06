@@ -12,7 +12,7 @@ import GlobalToasts from '~/components/partials/GlobalToasts.vue'
             <MobileNavBar class="sm:hidden"/>
             <div
                 class="page max-sm:mb-[var(--nav-mobile-height)] sm:ml-[var(--nav-narrow-width)]
-                       xl:ml-[var(--nav-medium-width)] 2xl:ml-[var(--nav-wide-width)] p-10"
+                       xl:ml-[var(--nav-medium-width)] 2xl:ml-[var(--nav-wide-width)] sm:p-10"
             >
                 <NuxtPage/>
             </div>

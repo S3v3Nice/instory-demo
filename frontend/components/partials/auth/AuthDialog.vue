@@ -2,12 +2,12 @@
 import 'vuetify/components'
 import LoginForm from '~/components/partials/auth/LoginForm.vue'
 import RegisterForm from '~/components/partials/auth/RegisterForm.vue'
-import ForgotPasswordForm from '~/components/partials/auth/ForgotPasswordForm.vue'
+import PasswordResetForm from '~/components/partials/auth/PasswordResetForm.vue'
 
 enum FormType {
     Login,
     Register,
-    ForgotPassword
+    PasswordReset
 }
 
 const formType = ref<FormType>(FormType.Login)
@@ -37,14 +37,14 @@ watch(isDialogOpen, (openDialog) => {
                 <LoginForm
                     v-if="formType === FormType.Login"
                     @switch-to-register="formType = FormType.Register"
-                    @switch-to-forgot-password="formType = FormType.ForgotPassword"
+                    @switch-to-forgot-password="formType = FormType.PasswordReset"
                 />
                 <RegisterForm
                     v-else-if="formType === FormType.Register"
                     @switch-to-login="formType = FormType.Login"
                 />
-                <ForgotPasswordForm
-                    v-else-if="formType === FormType.ForgotPassword"
+                <PasswordResetForm
+                    v-else-if="formType === FormType.PasswordReset"
                     @switch-to-login="formType = FormType.Login"
                 />
             </v-card>

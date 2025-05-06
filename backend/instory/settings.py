@@ -127,7 +127,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-FRONTEND_VERIFY_EMAIL_URL = urllib.parse.urljoin(APP_URL, '/email/verify')
+FRONTEND_EMAIL_VERIFY_URL = urllib.parse.urljoin(APP_URL, '/email/verify')
+FRONTEND_PASSWORD_RESET_URL = urllib.parse.urljoin(APP_URL, '/password/reset')
 
 EMAIL_HOST = os.getenv('EMAIL_HOST')
 EMAIL_PORT = os.getenv('EMAIL_PORT')

@@ -15,8 +15,28 @@ const data = reactive({
 })
 const errors = ref<{ [key: string]: string[] }>({})
 
-async function submitForgotPassword() {
-    // TODO
+async function submit() {
+    errors.value = {}
+    isLoading.value = true
+
+    $api('/password/reset/', {
+        method: 'POST',
+        body: data,
+        watch: false
+    }).then(() => {
+        toastStore.success('We\'ve sent a password reset link to the email provided!')
+    }).catch((error) => {
+        if (error?.data) {
+            errors.value = error.data
+            if (error.data.__all__) {
+                toastStore.error(error.data.__all__[0])
+            }
+        } else {
+            toastStore.error('Unknown error occurred')
+        }
+    }).finally(() => {
+        isLoading.value = false
+    })
 }
 </script>
 
@@ -29,15 +49,16 @@ async function submitForgotPassword() {
                 class="w-[50px]"
             >
 
-            <p class="text-3xl font-semibold">Forgot password?</p>
+            <p class="text-3xl font-semibold">Password Reset</p>
             <p class="">Enter your email and we will send you a password reset link.</p>
         </div>
 
-        <v-form @submit.prevent="submitForgotPassword">
+        <v-form @submit.prevent="submit">
             <v-container>
                 <v-text-field
                     v-model="data.email"
                     label="Email"
+                    :error-messages="errors['email']"
                     variant="outlined"
                 />
 

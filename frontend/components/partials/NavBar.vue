@@ -34,7 +34,7 @@ const extraItems = computed<ExtraMenuItem[]>(() => [
     {
         label: 'Settings',
         icon: 'mdi-cog-outline',
-        visible: true
+        visible: authStore.isAuthenticated
     },
     {
         label: 'Switch theme',
@@ -139,13 +139,15 @@ async function logout() {
                 </template>
 
                 <v-list>
-                    <v-list-item v-for="(item, i) in extraItems" :key="i" :value="i" @click="onMenuItemClick(item)">
-                        <template v-slot:prepend>
-                            <v-icon :icon="item.icon"></v-icon>
-                        </template>
+                    <template v-for="(item, i) in extraItems" :key="i">
+                        <v-list-item v-if="item.visible !== false" :value="i" @click="onMenuItemClick(item)">
+                            <template v-slot:prepend>
+                                <v-icon :icon="item.icon"></v-icon>
+                            </template>
 
-                        <v-list-item-title>{{ item.label }}</v-list-item-title>
-                    </v-list-item>
+                            <v-list-item-title>{{ item.label }}</v-list-item-title>
+                        </v-list-item>
+                    </template>
                 </v-list>
             </v-menu>
 

@@ -1,4 +1,6 @@
 from django.contrib.auth import login, logout
+from django.contrib.auth.forms import SetPasswordForm, PasswordResetForm
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
@@ -7,7 +9,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from users.emails import send_verification_email
+from users.emails import send_verification_email, send_password_reset_email
 from users.forms import LoginForm, RegisterForm
 from users.models import User
 from users.serializers import UserSerializer
@@ -83,13 +85,12 @@ class RegisterView(APIView):
         return Response({'success': True}, status=status.HTTP_201_CREATED)
 
 
-class VerifyUserView(APIView):
+class EmailVerifyView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, uidb64, token):
         try:
             uid = force_str(urlsafe_base64_decode(uidb64))
-
             user = User.objects.get(pk=uid)
         except Exception as e:
             user = None
@@ -101,3 +102,40 @@ class VerifyUserView(APIView):
             return Response(status=status.HTTP_200_OK)
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class PasswordResetView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        form = PasswordResetForm(data=request.data)
+        if not form.is_valid():
+            return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        email = form.cleaned_data['email']
+        user = User.objects.filter(email=email).first()
+        if user:
+            send_password_reset_email(user)
+
+        return Response(status=status.HTTP_200_OK)
+
+
+class PasswordResetConfirmView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, uidb64, token):
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+        except Exception as e:
+            user = None
+
+        if not user or not PasswordResetTokenGenerator().check_token(user, token):
+            return Response({'is_invalid_token': True}, status=status.HTTP_400_BAD_REQUEST)
+
+        form = SetPasswordForm(user=user, data=request.data)
+        if not form.is_valid():
+            return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        form.save()
+        return Response(status=status.HTTP_200_OK)
