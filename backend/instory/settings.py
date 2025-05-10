@@ -13,7 +13,7 @@ APP_URL = os.getenv('APP_URL')
 
 SECRET_KEY = os.getenv('APP_SECRET_KEY')
 DEBUG = os.getenv('APP_DEBUG').lower() == 'true'
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -40,6 +40,12 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.ScopedRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'email-send': '1/minute',
+    },
 }
 
 SESSION_COOKIE_AGE = 1209600

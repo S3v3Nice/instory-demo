@@ -2,6 +2,7 @@ export interface User {
     id: bigint
     username: string
     email: string
+    date_verified_email: string | null
     avatar: string | null
     first_name: string | null
     last_name: string | null

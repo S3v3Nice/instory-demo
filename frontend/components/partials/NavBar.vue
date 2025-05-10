@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import 'vuetify/components'
-import AuthDialog from '~/components/partials/auth/AuthDialog.vue'
+import type {RouteLocationRaw} from '#vue-router'
 
 interface Item {
     label: string
     icon: string
+    route?: RouteLocationRaw
+    action?: () => void
     visible?: boolean
 }
 
@@ -13,18 +15,17 @@ interface ExtraMenuItem {
     icon: string
     visible?: boolean
     switchValue?: boolean
+    route?: RouteLocationRaw
     action?: () => void
 }
 
 const authStore = useAuthStore()
 const themeStore = useThemeStore()
-const toastStore = useToastStore()
+const modalStore = useModalStore()
 
 const isMenuOpen = ref(false)
-const isLogOutDialog = ref(false)
-const isLoggingOut = ref(false)
 const items = computed<Item[]>(() => [
-    {label: 'Home', icon: 'mdi-home-outline'},
+    {label: 'Home', icon: 'mdi-home-outline', route: {name: 'index'}},
     {label: 'Search', icon: 'mdi-magnify'},
     {label: 'Explore', icon: 'mdi-compass-outline'},
     {label: 'Create', icon: 'mdi-plus-box-outline'},
@@ -34,6 +35,7 @@ const extraItems = computed<ExtraMenuItem[]>(() => [
     {
         label: 'Settings',
         icon: 'mdi-cog-outline',
+        route: {name: 'settings-profile'},
         visible: authStore.isAuthenticated
     },
     {
@@ -45,7 +47,7 @@ const extraItems = computed<ExtraMenuItem[]>(() => [
     {
         label: 'Log out',
         icon: 'mdi-logout',
-        action: () => isLogOutDialog.value = true,
+        action: () => modalStore.logoutModal = true,
         visible: authStore.isAuthenticated
     },
 ])
@@ -57,33 +59,6 @@ function onMenuItemClick(item: ExtraMenuItem) {
 
     if (item.switchValue === undefined) {
         isMenuOpen.value = false
-    }
-}
-
-async function logout() {
-    isLoggingOut.value = true
-
-    try {
-        await $api('/auth/logout/', {
-            method: 'POST',
-            watch: false
-        })
-
-        isLogOutDialog.value = false
-
-        authStore.reset()
-
-        toastStore.success('You have successfully logged out!')
-    } catch (error: any) {
-        if (error?.data) {
-            if (error.data.__all__) {
-                toastStore.error(error.data.__all__[0])
-            }
-        } else {
-            toastStore.error('Unknown error occurred')
-        }
-    } finally {
-        isLoggingOut.value = false
     }
 }
 </script>
@@ -106,17 +81,22 @@ async function logout() {
             </NuxtLink>
 
             <div class="flex flex-col gap-1 mt-7">
-                <template v-for="item in items">
-                    <v-btn
+                <template v-for="(item, i) in items" :key="i">
+                    <component
                         v-if="item.visible !== false"
-                        variant="text"
-                        class="flex xl:justify-start text-none cursor-pointer h-12 max-xl:px-0 min-w-0"
+                        :is="item.route ? 'RouterLink' : 'div'"
+                        :to="item.route"
                     >
-                        <div class="flex gap-4 items-center">
-                            <v-icon :icon="item.icon" size="24"/>
-                            <span class="max-xl:hidden">{{ item.label }}</span>
-                        </div>
-                    </v-btn>
+                        <v-btn
+                            variant="text"
+                            class="flex xl:justify-start text-none cursor-pointer h-12 max-xl:px-0 min-w-0 w-full"
+                        >
+                            <div class="flex gap-4 items-center">
+                                <v-icon :icon="item.icon" size="24"/>
+                                <span class="max-xl:hidden">{{ item.label }}</span>
+                            </div>
+                        </v-btn>
+                    </component>
                 </template>
             </div>
 
@@ -140,60 +120,35 @@ async function logout() {
 
                 <v-list>
                     <template v-for="(item, i) in extraItems" :key="i">
-                        <v-list-item v-if="item.visible !== false" :value="i" @click="onMenuItemClick(item)">
-                            <template v-slot:prepend>
-                                <v-icon :icon="item.icon"></v-icon>
-                            </template>
+                        <component
+                            v-if="item.visible !== false"
+                            :is="item.route ? 'RouterLink' : 'div'"
+                            :to="item.route"
+                        >
+                            <v-list-item :value="i" @click="onMenuItemClick(item)">
+                                <template v-slot:prepend>
+                                    <v-icon :icon="item.icon"></v-icon>
+                                </template>
 
-                            <v-list-item-title>{{ item.label }}</v-list-item-title>
-                        </v-list-item>
+                                <v-list-item-title>{{ item.label }}</v-list-item-title>
+                            </v-list-item>
+                        </component>
                     </template>
                 </v-list>
             </v-menu>
 
-            <AuthDialog v-if="!authStore.isAuthenticated">
-                <template #activator="{props: activatorProps}">
-                    <v-btn
-                        v-bind="activatorProps"
-                        color="primary"
-                        variant="flat"
-                        class="flex xl:justify-start text-none cursor-pointer h-12 mt-2 max-xl:px-0 min-w-0 w-full"
-                    >
-                        <div class="flex gap-4 items-center">
-                            <v-icon icon="mdi-login" size="24"/>
-                            <span class="max-xl:hidden">Log in</span>
-                        </div>
-                    </v-btn>
-                </template>
-            </AuthDialog>
-
-            <v-dialog v-model="isLogOutDialog" max-width="500">
-                <template v-slot:default="{ isActive }">
-                    <v-card>
-                        <v-card-title class="w-full flex items-center">
-                            <span>Logging out</span>
-                            <v-btn icon flat class="cursor-pointer ml-auto" @click="isActive.value = false">
-                                <v-icon>mdi-close</v-icon>
-                            </v-btn>
-                        </v-card-title>
-
-                        <v-card-text>
-                            Do you really want to log out?
-                        </v-card-text>
-
-                        <v-card-actions>
-                            <v-btn text="No" class="cursor-pointer" @click="isLogOutDialog = false"/>
-                            <v-btn
-                                text="Yes"
-                                variant="flat"
-                                color="surface-variant"
-                                class="cursor-pointer"
-                                @click="logout"
-                            />
-                        </v-card-actions>
-                    </v-card>
-                </template>
-            </v-dialog>
+            <v-btn
+                v-if="!authStore.isAuthenticated"
+                color="primary"
+                variant="flat"
+                class="flex xl:justify-start text-none cursor-pointer h-12 mt-2 max-xl:px-0 min-w-0 w-full"
+                @click="modalStore.authModal = true"
+            >
+                <div class="flex gap-4 items-center">
+                    <v-icon icon="mdi-login" size="24"/>
+                    <span class="max-xl:hidden">Log in</span>
+                </div>
+            </v-btn>
         </div>
     </nav>
 </template>

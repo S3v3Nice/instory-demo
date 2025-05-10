@@ -54,3 +54,13 @@ class RegisterForm(forms.Form):
                 {'password_confirm': 'Passwords do not match.'}
             )
         return cleaned_data
+
+
+class EmailChangeForm(forms.Form):
+    email = forms.EmailField(required=True)
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError('This email is already taken.')
+        return email

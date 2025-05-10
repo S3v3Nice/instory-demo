@@ -11,7 +11,7 @@ enum FormType {
 }
 
 const formType = ref<FormType>(FormType.Login)
-const isDialogOpen = ref(false)
+const isDialogOpen = defineModel({default: false})
 
 watch(isDialogOpen, (openDialog) => {
     if (openDialog) {

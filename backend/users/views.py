@@ -1,5 +1,5 @@
-from django.contrib.auth import login, logout
-from django.contrib.auth.forms import SetPasswordForm, PasswordResetForm
+from django.contrib.auth import login, logout, update_session_auth_hash
+from django.contrib.auth.forms import SetPasswordForm, PasswordResetForm, PasswordChangeForm
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils import timezone
 from django.utils.encoding import force_str
@@ -7,10 +7,11 @@ from django.utils.http import urlsafe_base64_decode
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
 from users.emails import send_verification_email, send_password_reset_email
-from users.forms import LoginForm, RegisterForm
+from users.forms import LoginForm, RegisterForm, EmailChangeForm
 from users.models import User
 from users.serializers import UserSerializer
 from users.utils import EmailVerificationTokenGenerator
@@ -33,7 +34,7 @@ class LoginView(APIView):
         else:
             request.session.set_expiry(86400)  # 1 day
 
-        return Response({'success': True}, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK)
 
 
 class LogoutView(APIView):
@@ -41,7 +42,7 @@ class LogoutView(APIView):
 
     def post(self, request):
         logout(request)
-        response = Response({'success': True}, status=status.HTTP_200_OK)
+        response = Response(status=status.HTTP_200_OK)
         response.delete_cookie('sessionid')
         return response
 
@@ -82,7 +83,21 @@ class RegisterView(APIView):
 
         send_verification_email(user)
 
-        return Response({'success': True}, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_201_CREATED)
+
+
+class EmailVerificationLinkSendView(APIView):
+    permission_classes = [IsAuthenticated]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'email-send'
+
+    def post(self, request):
+        user: User = request.user
+        if user.date_verified_email is None:
+            send_verification_email(user)
+            return Response(status=status.HTTP_200_OK)
+
+        return Response({'detail': 'Email is already verified'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class EmailVerifyView(APIView):
@@ -106,6 +121,8 @@ class EmailVerifyView(APIView):
 
 class PasswordResetView(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'email-send'
 
     def post(self, request):
         form = PasswordResetForm(data=request.data)
@@ -138,4 +155,36 @@ class PasswordResetConfirmView(APIView):
             return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
         form.save()
+        return Response(status=status.HTTP_200_OK)
+
+
+class EmailChangeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        form = EmailChangeForm(data=request.data)
+        if not form.is_valid():
+            return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        user: User = request.user
+        user.email = form.cleaned_data['email']
+        user.date_verified_email = None
+        user.save()
+
+        send_verification_email(user)
+
+        return Response(status=status.HTTP_200_OK)
+
+
+class PasswordChangeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        form = PasswordChangeForm(request.user, data=request.data)
+        if not form.is_valid():
+            return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        form.save()
+        update_session_auth_hash(request, request.user)
+
         return Response(status=status.HTTP_200_OK)

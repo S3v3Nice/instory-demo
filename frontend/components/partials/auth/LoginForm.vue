@@ -29,10 +29,7 @@ async function submitLogin() {
             body: data,
             watch: false
         })
-
-        await authStore.fetchUser()
-
-        toastStore.success('You have successfully logged in!')
+        reloadNuxtApp()
     } catch (error: any) {
         if (error?.data) {
             errors.value = error.data

@@ -24,6 +24,10 @@ export default defineNuxtConfig({
         '~/assets/css/main.scss',
         '~/assets/css/tailwind.css'
     ],
+    pinia: {
+        autoImports: ['defineStore'],
+        disableVuex: true
+    },
     vite: {
         vue: {
             template: {
