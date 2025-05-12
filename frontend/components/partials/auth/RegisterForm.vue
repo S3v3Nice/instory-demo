@@ -30,10 +30,7 @@ async function submitRegister() {
             body: data,
             watch: false
         })
-
-        await authStore.fetchUser()
-
-        toastStore.success('You have successfully registered!')
+        window.location.reload()
     } catch (error: any) {
         if (error?.data) {
             errors.value = error.data

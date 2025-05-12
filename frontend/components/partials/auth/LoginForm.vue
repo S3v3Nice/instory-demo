@@ -29,7 +29,7 @@ async function submitLogin() {
             body: data,
             watch: false
         })
-        reloadNuxtApp()
+        window.location.reload()
     } catch (error: any) {
         if (error?.data) {
             errors.value = error.data

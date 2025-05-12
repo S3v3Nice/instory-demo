@@ -1,6 +1,8 @@
 <script setup lang="ts">
 
 const toastStore = useToastStore()
+const authStore = useAuthStore()
+const router = useRouter()
 
 const isOpen = defineModel<boolean>({required: true})
 const isLoggingOut = ref(false)
@@ -13,7 +15,7 @@ async function logout() {
             method: 'POST',
             watch: false
         })
-        reloadNuxtApp()
+        window.location.reload()
     } catch (error: any) {
         if (error?.data) {
             if (error.data.__all__) {
