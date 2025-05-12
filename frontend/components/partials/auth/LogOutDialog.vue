@@ -1,10 +1,7 @@
 <script setup lang="ts">
+import ConfirmationDialog from '~/components/ConfirmationDialog.vue'
 
 const toastStore = useToastStore()
-const authStore = useAuthStore()
-const router = useRouter()
-
-const isOpen = defineModel<boolean>({required: true})
 const isLoggingOut = ref(false)
 
 async function logout() {
@@ -31,34 +28,13 @@ async function logout() {
 </script>
 
 <template>
-    <v-dialog v-model="isOpen" max-width="500">
-        <template v-slot:default="{ isActive }">
-            <v-card>
-                <v-card-title class="w-full flex items-center">
-                    <span>Logging out</span>
-                    <v-btn icon flat class="cursor-pointer ml-auto" @click="isActive.value = false">
-                        <v-icon>mdi-close</v-icon>
-                    </v-btn>
-                </v-card-title>
-
-                <v-card-text>
-                    Do you really want to log out?
-                </v-card-text>
-
-                <v-card-actions>
-                    <v-btn text="No" class="cursor-pointer" @click="isOpen = false"/>
-                    <v-btn
-                        text="Yes"
-                        variant="flat"
-                        :loading="isLoggingOut"
-                        color="surface-variant"
-                        class="cursor-pointer"
-                        @click="logout"
-                    />
-                </v-card-actions>
-            </v-card>
-        </template>
-    </v-dialog>
+    <ConfirmationDialog
+        title="Log out?"
+        description="Are you sure you want to log out of your account?"
+        cancel-btn="Cancel"
+        confirm-btn="Log out"
+        @confirm="logout"
+    />
 </template>
 
 <style scoped>

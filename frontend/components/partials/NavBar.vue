@@ -4,10 +4,11 @@ import type {RouteLocationRaw} from '#vue-router'
 
 interface Item {
     label: string
-    icon: string
+    icon?: string
     route?: RouteLocationRaw
     action?: () => void
     visible?: boolean
+    avatar?: boolean
 }
 
 interface ExtraMenuItem {
@@ -29,7 +30,7 @@ const items = computed<Item[]>(() => [
     {label: 'Search', icon: 'mdi-magnify'},
     {label: 'Explore', icon: 'mdi-compass-outline'},
     {label: 'Create', icon: 'mdi-plus-box-outline'},
-    {label: 'Profile', icon: 'mdi-account-circle', visible: authStore.isAuthenticated},
+    {label: 'Profile', avatar: true, visible: authStore.isAuthenticated},
 ])
 const extraItems = computed<ExtraMenuItem[]>(() => [
     {
@@ -92,7 +93,8 @@ function onMenuItemClick(item: ExtraMenuItem) {
                             class="flex xl:justify-start text-none cursor-pointer h-12 max-xl:px-0 min-w-0 w-full"
                         >
                             <div class="flex gap-4 items-center">
-                                <v-icon :icon="item.icon" size="24"/>
+                                <Avatar v-if="item.avatar" :user="authStore.user" size="24"></Avatar>
+                                <v-icon v-else-if="item.icon" :icon="item.icon" size="24"/>
                                 <span class="max-xl:hidden">{{ item.label }}</span>
                             </div>
                         </v-btn>

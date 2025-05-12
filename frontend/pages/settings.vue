@@ -13,7 +13,7 @@ const isNested = computed(() => {
     <div v-if="isNested" class="flex h-screen">
         <div class="flex flex-1">
             <div class="w-[315px] h-full overflow-auto border-r p-4 max-sm:hidden">
-                <p class="p-4 text-xl">Settings</p>
+                <p class="p-4 text-xl font-semibold">Settings</p>
                 <SettingsMenu/>
             </div>
 

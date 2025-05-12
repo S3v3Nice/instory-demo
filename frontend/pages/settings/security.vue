@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import EmailChangeDialog from '~/components/partials/settings/EmailChangeDialog.vue'
-import PasswordChangeDialog from '~/components/partials/settings/PasswordChangeDialog.vue'
-
+import PasswordChangeForm from '~/components/partials/settings/PasswordChangeForm.vue'
+import EmailChangeForm from '~/components/partials/settings/EmailChangeForm.vue'
 
 interface Item {
     label: string
@@ -59,7 +58,7 @@ async function sendVerificationLink() {
 
 <template>
     <div>
-        <h2 class="max-sm:hidden text-xl mb-4">Security Settings</h2>
+        <h2 class="max-sm:hidden text-xl mb-4 font-semibold">Security Settings</h2>
 
         <v-alert
             v-if="!authStore.isEmailVerified"
@@ -83,7 +82,7 @@ async function sendVerificationLink() {
                 v-for="item in items"
                 variant="flat"
                 append-icon="mdi-chevron-right"
-                class="flex w-full not-last:border-b rounded-none text-none justify-between cursor-pointer h-13"
+                class="flex w-full not-last:border-b rounded-none text-none justify-between cursor-pointer h-15"
                 @click="item.action()"
             >
                 <div class="text-start">
@@ -93,8 +92,12 @@ async function sendVerificationLink() {
             </v-btn>
         </div>
 
-        <EmailChangeDialog v-model="isEmailChangeDialog"/>
-        <PasswordChangeDialog v-model="isPasswordChangeDialog"/>
+        <Dialog v-model="isEmailChangeDialog">
+            <EmailChangeForm @submit="isEmailChangeDialog = false"/>
+        </Dialog>
+        <Dialog v-model="isPasswordChangeDialog">
+            <PasswordChangeForm @submit="isPasswordChangeDialog = false"/>
+        </Dialog>
     </div>
 </template>
 

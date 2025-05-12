@@ -11,9 +11,9 @@ from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
 from users.emails import send_verification_email, send_password_reset_email
-from users.forms import LoginForm, RegisterForm, EmailChangeForm
+from users.forms import LoginForm, RegisterForm, EmailChangeForm, ProfileSettingsForm, UsernameChangeForm
 from users.models import User
-from users.serializers import UserSerializer
+from users.serializers import UserSerializer, AvatarUploadSerializer
 from users.utils import EmailVerificationTokenGenerator
 
 
@@ -188,3 +188,46 @@ class PasswordChangeView(APIView):
         update_session_auth_hash(request, request.user)
 
         return Response(status=status.HTTP_200_OK)
+
+
+class ProfileSettingsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        form = ProfileSettingsForm(data=request.data)
+        if not form.is_valid():
+            return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        user = request.user
+        user.first_name = form.cleaned_data['first_name']
+        user.last_name = form.cleaned_data['last_name']
+        user.save()
+
+        return Response(status=status.HTTP_200_OK)
+
+
+class UsernameChangeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        form = UsernameChangeForm(data=request.data)
+        if not form.is_valid():
+            return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        user = request.user
+        user.username = form.cleaned_data['username']
+        user.save()
+
+        return Response(status=status.HTTP_200_OK)
+
+
+class AvatarUpdateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        serializer = AvatarUploadSerializer(request.user, data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.save()
+        return Response({'avatar': serializer.data['avatar']}, status=status.HTTP_200_OK)

@@ -28,7 +28,7 @@ class LoginForm(forms.Form):
 
 class RegisterForm(forms.Form):
     email = forms.EmailField(required=True)
-    username = forms.CharField(max_length=150, required=True)
+    username = forms.CharField(max_length=30, required=True)
     password = forms.CharField(widget=forms.PasswordInput, required=True, min_length=8)
     password_confirm = forms.CharField(widget=forms.PasswordInput, required=True, label='Confirm Password')
 
@@ -64,3 +64,18 @@ class EmailChangeForm(forms.Form):
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError('This email is already taken.')
         return email
+
+
+class ProfileSettingsForm(forms.Form):
+    first_name = forms.CharField(required=False)
+    last_name = forms.CharField(required=False)
+
+
+class UsernameChangeForm(forms.Form):
+    username = forms.CharField(max_length=30, required=True)
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError('This username is already taken.')
+        return username
