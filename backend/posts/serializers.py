@@ -1,7 +1,49 @@
+from PIL import Image
 from rest_framework import serializers
 
 from posts.models import Post, PostComment
 from users.serializers import UserSerializer
+
+
+class PostCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ['image', 'description']
+
+    def validate_image(self, image):
+        max_file_size = 2 * 1024 * 1024
+        if image.size > max_file_size:
+            raise serializers.ValidationError("The file size should not exceed 2 MB.")
+
+        min_width = 150
+        min_height = 150
+
+        try:
+            img = Image.open(image)
+            width, height = img.size
+        except Exception:
+            raise serializers.ValidationError("Unable to process image.")
+
+        if width < min_width or height < min_height:
+            raise serializers.ValidationError(
+                f"Minimum image resolution — {min_width}x{min_height} px."
+            )
+
+        image.seek(0)
+        return image
+
+    # def create(self, validated_data):
+    #     # image = validated_data.get('image')
+    #     # if image:
+    #     #     img = Image.open(image)
+    #     #
+    #     #     if img.mode in ("RGBA", "P"):
+    #     #         img = img.convert("RGB")
+    #     #
+    #     #     buffer = BytesIO()
+    #     #     img.save(buffer, format='JPEG')
+    #
+    #     return Post.objects.create(**validated_data)
 
 
 class PostSerializer(serializers.ModelSerializer):

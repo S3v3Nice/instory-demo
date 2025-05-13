@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from posts.views import PostCreateView
 from users.views import LoginView, LogoutView, CurrentUserView, RegisterView, EmailVerificationLinkSendView, \
     EmailVerifyView, PasswordResetView, PasswordResetConfirmView, EmailChangeView, PasswordChangeView, \
     ProfileSettingsView, UsernameChangeView, AvatarUpdateView
@@ -30,11 +31,11 @@ urlpatterns = [
     path('api/v1/email/verify/', EmailVerificationLinkSendView.as_view(), name='email.verify.send'),
     path('api/v1/email/verify/<uidb64>/<token>/', EmailVerifyView.as_view(), name='email.verify'),
     path('api/v1/password/reset/', PasswordResetView.as_view(), name='password.reset'),
-    path('api/v1/password/reset/<uidb64>/<token>/', PasswordResetConfirmView.as_view(),
-         name='password.reset.confirm'),
+    path('api/v1/password/reset/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password.reset.confirm'),
     path('api/v1/settings/security/email/', EmailChangeView.as_view(), name='email.change'),
     path('api/v1/settings/security/password/', PasswordChangeView.as_view(), name='password.change'),
     path('api/v1/settings/profile/', ProfileSettingsView.as_view(), name='profile.update'),
     path('api/v1/settings/profile/username/', UsernameChangeView.as_view(), name='username.change'),
     path('api/v1/settings/profile/avatar/', AvatarUpdateView.as_view(), name='username.change'),
+    path('api/v1/posts/', PostCreateView.as_view(), name='posts.create'),
 ]

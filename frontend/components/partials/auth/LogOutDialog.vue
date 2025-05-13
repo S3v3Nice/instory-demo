@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ConfirmationDialog from '~/components/ConfirmationDialog.vue'
 
+const isOpen = defineModel<boolean>({required: true})
 const toastStore = useToastStore()
 const isLoggingOut = ref(false)
 
@@ -29,6 +30,7 @@ async function logout() {
 
 <template>
     <ConfirmationDialog
+        v-model="isOpen"
         title="Log out?"
         description="Are you sure you want to log out of your account?"
         cancel-btn="Cancel"

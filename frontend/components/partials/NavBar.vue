@@ -29,7 +29,7 @@ const items = computed<Item[]>(() => [
     {label: 'Home', icon: 'mdi-home-outline', route: {name: 'index'}},
     {label: 'Search', icon: 'mdi-magnify'},
     {label: 'Explore', icon: 'mdi-compass-outline'},
-    {label: 'Create', icon: 'mdi-plus-box-outline'},
+    {label: 'Create', icon: 'mdi-plus-box-outline', action: () => modalStore.postCreateModal = true},
     {label: 'Profile', avatar: true, visible: authStore.isAuthenticated},
 ])
 const extraItems = computed<ExtraMenuItem[]>(() => [
@@ -52,6 +52,12 @@ const extraItems = computed<ExtraMenuItem[]>(() => [
         visible: authStore.isAuthenticated
     },
 ])
+
+function onItemClick(item: Item) {
+    if (item.action !== undefined) {
+        item.action()
+    }
+}
 
 function onMenuItemClick(item: ExtraMenuItem) {
     if (item.action !== undefined) {
@@ -87,13 +93,14 @@ function onMenuItemClick(item: ExtraMenuItem) {
                         v-if="item.visible !== false"
                         :is="item.route ? 'RouterLink' : 'div'"
                         :to="item.route"
+                        @click="onItemClick(item)"
                     >
                         <v-btn
                             variant="text"
                             class="flex xl:justify-start text-none cursor-pointer h-12 max-xl:px-0 min-w-0 w-full"
                         >
                             <div class="flex gap-4 items-center">
-                                <Avatar v-if="item.avatar" :user="authStore.user" size="24"></Avatar>
+                                <Avatar v-if="item.avatar" :user="authStore.user" :size="24"></Avatar>
                                 <v-icon v-else-if="item.icon" :icon="item.icon" size="24"/>
                                 <span class="max-xl:hidden">{{ item.label }}</span>
                             </div>

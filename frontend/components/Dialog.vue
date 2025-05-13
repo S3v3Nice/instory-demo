@@ -1,5 +1,10 @@
 <script setup lang="ts">
 defineProps({
+    title: String,
+    backBtn: {
+        type: Boolean,
+        default: false,
+    },
     closeBtn: {
         type: Boolean,
         default: true,
@@ -17,6 +22,7 @@ defineProps({
         default: true,
     }
 })
+const emit = defineEmits(['back'])
 const isOpen = defineModel<boolean>({required: true})
 </script>
 
@@ -24,8 +30,34 @@ const isOpen = defineModel<boolean>({required: true})
     <v-dialog v-model="isOpen" :max-width="maxWidth" :width="fullWidth ? '100%' : undefined">
         <template v-slot:default="{ isActive }">
             <v-card :rounded="rounded">
-                <v-card-title v-if="closeBtn" class="w-full flex items-center pb-0">
-                    <v-btn icon flat class="cursor-pointer ml-auto -mr-3" @click="isActive.value = false">
+                <v-card-title
+                    v-if="backBtn || title || closeBtn"
+                    class="relative h-[3rem]"
+                >
+                    <v-btn
+                        v-if="backBtn"
+                        icon
+                        flat
+                        class="cursor-pointer absolute left-0 top-1/2 -translate-y-1/2"
+                        @click="emit('back')"
+                    >
+                        <v-icon>mdi-arrow-left</v-icon>
+                    </v-btn>
+
+                    <p
+                        v-if="title"
+                        class="text-base font-semibold absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                    >
+                        {{ title }}
+                    </p>
+
+                    <v-btn
+                        v-if="closeBtn"
+                        icon
+                        flat
+                        class="cursor-pointer absolute right-0 top-1/2 -translate-y-1/2"
+                        @click="isActive.value = false"
+                    >
                         <v-icon>mdi-close</v-icon>
                     </v-btn>
                 </v-card-title>

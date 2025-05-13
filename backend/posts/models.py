@@ -5,7 +5,7 @@ from django.db import models
 class Post(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='posts')
     image = models.ImageField(upload_to='posts/')
-    description = models.ImageField(blank=True)
+    description = models.TextField(blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
 
 
