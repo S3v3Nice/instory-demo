@@ -7,8 +7,9 @@ export interface User {
     first_name: string | null
     last_name: string | null
     date_joined: string
-    followers?: Follower[]
-    following?: Following[]
+    posts_count?: number
+    followers_count?: number
+    following_count?: number
 }
 
 export interface Follower {
@@ -18,5 +19,13 @@ export interface Follower {
 
 export interface Following {
     following: User
+    date_created: string
+}
+
+export interface Post {
+    id: bigint
+    user: User
+    image: string
+    description: string | null
     date_created: string
 }

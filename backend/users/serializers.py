@@ -73,13 +73,16 @@ class UserSerializer(serializers.ModelSerializer):
     avatar = serializers.SerializerMethodField()
     email = serializers.SerializerMethodField()
     date_verified_email = serializers.SerializerMethodField()
-    followers = serializers.SerializerMethodField()
-    following = serializers.SerializerMethodField()
+    posts_count = serializers.SerializerMethodField()
+    followers_count = serializers.SerializerMethodField()
+    following_count = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'date_verified_email', 'avatar', 'first_name', 'last_name', 'followers',
-                  'following']
+        fields = [
+            'id', 'username', 'email', 'date_verified_email', 'avatar', 'first_name', 'last_name', 'followers_count',
+            'following_count', 'posts_count',
+        ]
 
     def get_avatar(self, obj):
         if obj.avatar:
@@ -98,13 +101,17 @@ class UserSerializer(serializers.ModelSerializer):
         if request and (request.user == obj or request.user.is_superuser):
             return obj.date_verified_email
 
-    def get_followers(self, obj):
-        if self.context.get('with_followers', False):
-            return FollowerSerializer(obj.followers.all(), many=True).data
+    def get_posts_count(self, obj):
+        if self.context.get('with_posts_count', False):
+            return obj.posts.count()
 
-    def get_following(self, obj):
-        if self.context.get('with_following', False):
-            return FollowingSerializer(obj.following.all(), many=True).data
+    def get_followers_count(self, obj):
+        if self.context.get('with_followers_count', False):
+            return obj.followers.count()
+
+    def get_following_count(self, obj: User):
+        if self.context.get('with_following_count', False):
+            return obj.following.count()
 
 
 class FollowerSerializer(serializers.ModelSerializer):

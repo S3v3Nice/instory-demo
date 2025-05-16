@@ -1,4 +1,5 @@
 from PIL import Image
+from django.conf import settings
 from rest_framework import serializers
 
 from posts.models import Post, PostComment
@@ -32,42 +33,36 @@ class PostCreateSerializer(serializers.ModelSerializer):
         image.seek(0)
         return image
 
-    # def create(self, validated_data):
-    #     # image = validated_data.get('image')
-    #     # if image:
-    #     #     img = Image.open(image)
-    #     #
-    #     #     if img.mode in ("RGBA", "P"):
-    #     #         img = img.convert("RGB")
-    #     #
-    #     #     buffer = BytesIO()
-    #     #     img.save(buffer, format='JPEG')
-    #
-    #     return Post.objects.create(**validated_data)
-
 
 class PostSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
     comments_count = serializers.SerializerMethodField()
     likes_count = serializers.SerializerMethodField()
     is_liked = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = ['id', 'user', 'image', 'description', 'date_created', 'comments_count', 'likes_count', 'is_liked']
+        fields = ['id', 'user', 'image', 'description', 'date_created', 'comments_count', 'likes_count', 'is_liked',
+                  'image']
 
-    def get_user(self, obj):
+    def get_user(self, obj: Post):
         if self.context.get('with_user', False):
             return UserSerializer(obj.user).data
 
-    def get_comments_count(self, obj):
+    def get_comments_count(self, obj: Post):
         return getattr(obj, 'comments_count', None)
 
-    def get_likes_count(self, obj):
+    def get_likes_count(self, obj: Post):
         return getattr(obj, 'likes_count', None)
 
-    def get_is_liked(self, obj):
+    def get_is_liked(self, obj: Post):
         return getattr(obj, 'is_liked', None)
+
+    def get_image(self, obj: Post):
+        if obj.image:
+            return f"{settings.APP_URL}{obj.image.url}"
+        return None
 
 
 class PostCommentSerializer(serializers.ModelSerializer):
@@ -81,16 +76,16 @@ class PostCommentSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'post', 'parent_comment', 'content', 'date_created', 'likes_count']
         depth = 1
 
-    def get_user(self, obj):
+    def get_user(self, obj: PostComment):
         if self.context.get('with_user', False):
             return UserSerializer(obj.user).data
 
-    def get_post(self, obj):
+    def get_post(self, obj: PostComment):
         if self.context.get('with_post', False):
             return PostSerializer(obj.post).data
 
-    def get_likes_count(self, obj):
+    def get_likes_count(self, obj: PostComment):
         return getattr(obj, 'likes_count', None)
 
-    def get_is_liked(self, obj):
+    def get_is_liked(self, obj: PostComment):
         return getattr(obj, 'is_liked', None)

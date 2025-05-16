@@ -29,8 +29,13 @@ const items = computed<Item[]>(() => [
     {label: 'Home', icon: 'mdi-home-outline', route: {name: 'index'}},
     {label: 'Search', icon: 'mdi-magnify'},
     {label: 'Explore', icon: 'mdi-compass-outline'},
-    {label: 'Create', icon: 'mdi-plus-box-outline', action: () => modalStore.postCreateModal = true},
-    {label: 'Profile', avatar: true, visible: authStore.isAuthenticated},
+    {label: 'Create', icon: 'mdi-plus-box-outline', action: onPostCreateClick},
+    {
+        label: 'Profile',
+        avatar: true,
+        route: {name: 'users-username', params: {username: authStore.username}},
+        visible: authStore.isAuthenticated
+    },
 ])
 const extraItems = computed<ExtraMenuItem[]>(() => [
     {
@@ -66,6 +71,14 @@ function onMenuItemClick(item: ExtraMenuItem) {
 
     if (item.switchValue === undefined) {
         isMenuOpen.value = false
+    }
+}
+
+function onPostCreateClick() {
+    if (authStore.isAuthenticated) {
+        modalStore.postCreateModal = true
+    } else {
+        modalStore.authModal = true
     }
 }
 </script>

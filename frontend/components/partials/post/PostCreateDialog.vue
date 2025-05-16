@@ -69,6 +69,7 @@ async function submit() {
 watch(isOpen, (isOpen) => {
     if (isOpen) {
         imageFile.value = undefined
+        description.value = ''
     }
 })
 </script>

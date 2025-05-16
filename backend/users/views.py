@@ -5,7 +5,9 @@ from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import status
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
@@ -20,7 +22,7 @@ from users.utils import EmailVerificationTokenGenerator
 class LoginView(APIView):
     permission_classes = [AllowAny]
 
-    def post(self, request):
+    def post(self, request: Request):
         form = LoginForm(data=request.data)
         if not form.is_valid():
             return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -40,7 +42,7 @@ class LoginView(APIView):
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
+    def post(self, request: Request):
         logout(request)
         response = Response(status=status.HTTP_200_OK)
         response.delete_cookie('sessionid')
@@ -50,14 +52,12 @@ class LogoutView(APIView):
 class CurrentUserView(APIView):
     permission_classes = [AllowAny]
 
-    def get(self, request):
+    def get(self, request: Request):
         if request.user.is_authenticated:
             serializer = UserSerializer(
                 request.user,
                 context={
                     'request': request,
-                    'with_followers': True,
-                    'with_following': True,
                 }
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -67,7 +67,7 @@ class CurrentUserView(APIView):
 class RegisterView(APIView):
     permission_classes = [AllowAny]
 
-    def post(self, request):
+    def post(self, request: Request):
         form = RegisterForm(data=request.data)
         if not form.is_valid():
             return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -91,7 +91,7 @@ class EmailVerificationLinkSendView(APIView):
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = 'email-send'
 
-    def post(self, request):
+    def post(self, request: Request):
         user: User = request.user
         if user.date_verified_email is None:
             send_verification_email(user)
@@ -103,7 +103,7 @@ class EmailVerificationLinkSendView(APIView):
 class EmailVerifyView(APIView):
     permission_classes = [AllowAny]
 
-    def post(self, request, uidb64, token):
+    def post(self, request: Request, uidb64: str, token: str):
         try:
             uid = force_str(urlsafe_base64_decode(uidb64))
             user = User.objects.get(pk=uid)
@@ -124,7 +124,7 @@ class PasswordResetView(APIView):
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = 'email-send'
 
-    def post(self, request):
+    def post(self, request: Request):
         form = PasswordResetForm(data=request.data)
         if not form.is_valid():
             return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -140,7 +140,7 @@ class PasswordResetView(APIView):
 class PasswordResetConfirmView(APIView):
     permission_classes = [AllowAny]
 
-    def post(self, request, uidb64, token):
+    def post(self, request: Request, uidb64: str, token: str):
         try:
             uid = force_str(urlsafe_base64_decode(uidb64))
             user = User.objects.get(pk=uid)
@@ -161,7 +161,7 @@ class PasswordResetConfirmView(APIView):
 class EmailChangeView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def put(self, request):
+    def put(self, request: Request):
         form = EmailChangeForm(data=request.data)
         if not form.is_valid():
             return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -179,7 +179,7 @@ class EmailChangeView(APIView):
 class PasswordChangeView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def put(self, request):
+    def put(self, request: Request):
         form = PasswordChangeForm(request.user, data=request.data)
         if not form.is_valid():
             return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -193,7 +193,7 @@ class PasswordChangeView(APIView):
 class ProfileSettingsView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def put(self, request):
+    def put(self, request: Request):
         form = ProfileSettingsForm(data=request.data)
         if not form.is_valid():
             return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -209,7 +209,7 @@ class ProfileSettingsView(APIView):
 class UsernameChangeView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def put(self, request):
+    def put(self, request: Request):
         form = UsernameChangeForm(data=request.data)
         if not form.is_valid():
             return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -224,10 +224,28 @@ class UsernameChangeView(APIView):
 class AvatarUpdateView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def put(self, request):
+    def put(self, request: Request):
         serializer = AvatarUploadSerializer(request.user, data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         serializer.save()
         return Response({'avatar': serializer.data['avatar']}, status=status.HTTP_200_OK)
+
+
+class UserView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request: Request, username: str):
+        user = get_object_or_404(User, username=username)
+
+        serializer = UserSerializer(
+            user,
+            context={
+                'request': request,
+                'with_posts_count': True,
+                'with_followers_count': True,
+                'with_following_count': True,
+            }
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)

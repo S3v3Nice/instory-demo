@@ -17,10 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from posts.views import PostCreateView
+from posts.views import PostCreateView, UserPostsView
 from users.views import LoginView, LogoutView, CurrentUserView, RegisterView, EmailVerificationLinkSendView, \
     EmailVerifyView, PasswordResetView, PasswordResetConfirmView, EmailChangeView, PasswordChangeView, \
-    ProfileSettingsView, UsernameChangeView, AvatarUpdateView
+    ProfileSettingsView, UsernameChangeView, AvatarUpdateView, UserView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -38,4 +38,6 @@ urlpatterns = [
     path('api/v1/settings/profile/username/', UsernameChangeView.as_view(), name='username.change'),
     path('api/v1/settings/profile/avatar/', AvatarUpdateView.as_view(), name='username.change'),
     path('api/v1/posts/', PostCreateView.as_view(), name='posts.create'),
+    path('api/v1/users/<username>/', UserView.as_view(), name='users.get'),
+    path('api/v1/users/<username>/posts/', UserPostsView.as_view(), name='user.posts'),
 ]
