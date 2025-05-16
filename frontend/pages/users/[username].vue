@@ -2,8 +2,13 @@
 import type {Post, User} from '~/types'
 
 const route = useRoute()
-const authStore = useAuthStore()
 const username = route.params.username as string
+
+useHead({
+    title: username,
+})
+
+const authStore = useAuthStore()
 
 const {
     data: user,

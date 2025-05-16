@@ -1,4 +1,8 @@
 <script setup lang="ts">
+useHead({
+    title: 'Email Verify',
+})
+
 const route = useRoute()
 
 const uidb64 = route.params.uidb64

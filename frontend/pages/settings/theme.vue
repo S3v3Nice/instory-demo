@@ -1,4 +1,8 @@
 <script setup lang="ts">
+useHead({
+    title: 'Theme Settings',
+})
+
 const themeStore = useThemeStore()
 </script>
 

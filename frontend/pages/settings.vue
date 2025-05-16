@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import SettingsMenu from '~/components/partials/settings/SettingsMenu.vue'
 
+useHead({
+    title: 'Settings',
+})
+
 const route = useRoute()
 
 const isNested = computed(() => {

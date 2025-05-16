@@ -5,6 +5,13 @@ import GlobalToasts from '~/components/partials/GlobalToasts.vue'
 import GlobalModals from '~/components/partials/GlobalModals.vue'
 import AuthRequired from '~/components/partials/pageAccessErrors/AuthRequired.vue'
 
+const config = useRuntimeConfig()
+useHead({
+    titleTemplate: (titleChunk) => {
+        return titleChunk ? `${titleChunk} – ${config.public.appName}` : config.public.appName
+    }
+})
+
 const pageAccessErrorStore = usePageAccessErrorStore()
 </script>
 

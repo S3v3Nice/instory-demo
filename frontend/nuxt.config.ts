@@ -9,6 +9,11 @@ export default defineNuxtConfig({
     build: {
         transpile: ['vuetify'],
     },
+    runtimeConfig: {
+        public: {
+            appName: process.env.APP_NAME,
+        }
+    },
     modules: [
         defineNuxtModule({
             setup(_options, nuxt) {

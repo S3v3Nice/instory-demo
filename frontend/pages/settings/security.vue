@@ -2,6 +2,10 @@
 import PasswordChangeForm from '~/components/partials/settings/PasswordChangeForm.vue'
 import EmailChangeForm from '~/components/partials/settings/EmailChangeForm.vue'
 
+useHead({
+    title: 'Security Settings',
+})
+
 interface Item {
     label: string
     value?: string

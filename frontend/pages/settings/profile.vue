@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import UsernameChangeForm from '~/components/partials/settings/UsernameChangeForm.vue'
 
+useHead({
+    title: 'Profile Settings',
+})
+
 definePageMeta({
     requiresAuth: true
 })

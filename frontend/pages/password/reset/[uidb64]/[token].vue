@@ -1,4 +1,8 @@
 <script setup lang="ts">
+useHead({
+    title: 'Password Reset',
+})
+
 const route = useRoute()
 
 const themeStore = useThemeStore()
