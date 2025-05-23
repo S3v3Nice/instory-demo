@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from posts.views import PostCreateView, UserPostsView
+from posts.views import PostCreateView, UserPostsView, PostView
 from users.views import LoginView, LogoutView, CurrentUserView, RegisterView, EmailVerificationLinkSendView, \
     EmailVerifyView, PasswordResetView, PasswordResetConfirmView, EmailChangeView, PasswordChangeView, \
     ProfileSettingsView, UsernameChangeView, AvatarUpdateView, UserView
@@ -40,4 +40,5 @@ urlpatterns = [
     path('api/v1/posts/', PostCreateView.as_view(), name='posts.create'),
     path('api/v1/users/<username>/', UserView.as_view(), name='users.get'),
     path('api/v1/users/<username>/posts/', UserPostsView.as_view(), name='user.posts'),
+    path('api/v1/posts/<id>/', PostView.as_view(), name='post'),
 ]

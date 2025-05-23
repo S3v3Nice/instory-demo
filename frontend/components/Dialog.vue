@@ -22,8 +22,14 @@ defineProps({
         default: true,
     }
 })
-const emit = defineEmits(['back'])
+const emit = defineEmits(['back', 'close'])
 const isOpen = defineModel<boolean>({required: true})
+
+watch(isOpen, (isOpen) => {
+    if (!isOpen) {
+        emit('close')
+    }
+})
 </script>
 
 <template>

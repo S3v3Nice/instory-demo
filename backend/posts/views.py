@@ -1,5 +1,5 @@
 from rest_framework import status
-from rest_framework.generics import ListAPIView, get_object_or_404
+from rest_framework.generics import ListAPIView, get_object_or_404, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -29,3 +29,15 @@ class UserPostsView(ListAPIView):
         username = self.kwargs['username']
         user = get_object_or_404(User, username=username)
         return Post.objects.filter(user=user).order_by('-date_created')
+
+
+class PostView(RetrieveAPIView):
+    permission_classes = [AllowAny]
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    lookup_field = 'id'
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['with_user'] = True
+        return context

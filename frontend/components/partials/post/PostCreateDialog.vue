@@ -135,8 +135,6 @@ watch(isOpen, (isOpen) => {
             </div>
         </div>
     </Dialog>
-
-
 </template>
 
 <style scoped>

@@ -1,6 +1,7 @@
 from PIL import Image
 from django.conf import settings
 from rest_framework import serializers
+from rest_framework.request import Request
 
 from posts.models import Post, PostComment
 from users.serializers import UserSerializer
@@ -51,13 +52,14 @@ class PostSerializer(serializers.ModelSerializer):
             return UserSerializer(obj.user).data
 
     def get_comments_count(self, obj: Post):
-        return getattr(obj, 'comments_count', None)
+        return obj.comments.count()
 
     def get_likes_count(self, obj: Post):
-        return getattr(obj, 'likes_count', None)
+        return obj.likes.count()
 
     def get_is_liked(self, obj: Post):
-        return getattr(obj, 'is_liked', None)
+        request: Request | None = self.context.get('request')
+        return obj.likes.filter(user_id=request.user.pk).exists()
 
     def get_image(self, obj: Post):
         if obj.image:
