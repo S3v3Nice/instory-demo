@@ -23,12 +23,12 @@ The database is PostgreSQL.
 - Basic account settings: change username, avatar, first and last name, email, password
 - Creating a post with a photo and its description
 - View any user's profile with their published photos
+- Liking posts
 - Validation of all data sent to the Backend, differentiation of API access
 - Dockerized setup for easy deployment
 
 ## Features still in progress
 
-- Liking posts
 - Creating post comments
 - Following on users
 - User searching

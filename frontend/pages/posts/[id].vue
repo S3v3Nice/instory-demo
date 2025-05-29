@@ -7,6 +7,7 @@ useHead({
 })
 
 const route = useRoute()
+const toastStore = useToastStore()
 const id = route.params.id
 
 const {
@@ -18,6 +19,22 @@ const {
 )
 
 const isPostLoading = computed(() => postStatus.value === 'pending')
+
+async function toggleLike() {
+    const isLike = !post.value!.is_liked
+    post.value!.is_liked = isLike
+    post.value!.likes_count += isLike ? 1 : -1
+
+    try {
+        await $api(`/posts/${id}/likes/`, {
+            method: isLike ? 'POST' : 'DELETE',
+        })
+    } catch (error: any) {
+        toastStore.error('Internal error occurred')
+        post.value!.is_liked = !isLike
+        post.value!.likes_count += isLike ? -1 : 1
+    }
+}
 </script>
 
 <template>
@@ -65,6 +82,7 @@ const isPostLoading = computed(() => postStatus.value === 'pending')
                                 width="40"
                                 height="40"
                                 class="cursor-pointer"
+                                @click="toggleLike"
                             />
                             <p class="text-center font-semibold text-sm">{{ post.likes_count }}</p>
                         </div>

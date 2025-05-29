@@ -1,10 +1,11 @@
 from rest_framework import status
 from rest_framework.generics import ListAPIView, get_object_or_404, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from posts.models import Post
+from posts.models import Post, PostLike
 from posts.serializers import PostCreateSerializer, PostSerializer
 from users.backends import User
 
@@ -41,3 +42,19 @@ class PostView(RetrieveAPIView):
         context = super().get_serializer_context()
         context['with_user'] = True
         return context
+
+
+class PostLikesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request: Request, post_id: int):
+        user = request.user
+        post = get_object_or_404(Post, id=post_id)
+        PostLike.objects.get_or_create(user=user, post=post)
+        return Response(status=status.HTTP_200_OK)
+
+    def delete(self, request: Request, post_id: int):
+        user = request.user
+        post = get_object_or_404(Post, id=post_id)
+        PostLike.objects.filter(user=user, post=post).delete()
+        return Response(status=status.HTTP_200_OK)

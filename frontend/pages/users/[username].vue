@@ -84,7 +84,7 @@ const isPostsLoading = computed(() => postsStatus.value === 'idle' || postsStatu
                                 </span>
                             </div>
                             <p class="max-sm:hidden text-sm font-semibold">
-                                {{ user.first_name }} {{user.last_name }}
+                                {{ user.first_name }} {{ user.last_name }}
                             </p>
                         </div>
                     </div>
@@ -135,7 +135,7 @@ const isPostsLoading = computed(() => postsStatus.value === 'idle' || postsStatu
                                 class="absolute flex inset-0 opacity-0 group-hover:opacity-100 items-center justify-center gap-6 transition-opacity  text-white"
                             >
                                 <div class="flex items-center gap-1">
-                                    <v-icon size="24">mdi-heart</v-icon>
+                                    <v-icon size="24" :color="post!.is_liked ? 'red' : undefined">mdi-heart</v-icon>
                                     <span class="font-semibold">{{ post.likes_count }}</span>
                                 </div>
                                 <div class="flex items-center gap-1">
