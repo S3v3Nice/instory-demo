@@ -73,7 +73,7 @@ async function sendVerificationLink() {
             <p>Your email has not been verified yet!</p>
             <v-btn
                 variant="outlined"
-                class="text-none mt-2 cursor-pointer"
+                class="normal-case mt-2 cursor-pointer"
                 :loading="isSendingVerificationLink"
                 @click="sendVerificationLink"
             >
@@ -86,7 +86,7 @@ async function sendVerificationLink() {
                 v-for="item in items"
                 variant="flat"
                 append-icon="mdi-chevron-right"
-                class="flex w-full not-last:border-b rounded-none text-none justify-between cursor-pointer h-15"
+                class="flex w-full not-last:border-b rounded-none normal-case justify-between cursor-pointer h-15"
                 @click="item.action()"
             >
                 <div class="text-start">

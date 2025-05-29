@@ -28,4 +28,7 @@ export interface Post {
     image: string
     description: string | null
     date_created: string
+    is_liked: boolean
+    likes_count: number
+    comments_count: number
 }

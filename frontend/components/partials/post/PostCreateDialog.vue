@@ -109,7 +109,7 @@ watch(isOpen, (isOpen) => {
                     <v-btn
                         color="primary"
                         variant="flat"
-                        class="text-none cursor-pointer"
+                        class="normal-case cursor-pointer"
                         @click="openImageUploadDialog"
                     >
                         Select from files

@@ -125,7 +125,7 @@ async function submitRegister() {
             <v-btn
                 block
                 variant="text"
-                class="cursor-pointer text-none mt-1"
+                class="cursor-pointer normal-case mt-1"
                 @click="emit('switch-to-login')"
             >
                 Already have an account?

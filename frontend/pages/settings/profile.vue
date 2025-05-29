@@ -98,7 +98,7 @@ async function uploadAvatar(input: File) {
             <v-btn
                 color="primary"
                 variant="flat"
-                class="ml-auto text-none cursor-pointer"
+                class="ml-auto normal-case cursor-pointer"
                 @click="openAvatarUploadDialog()"
             >
                 New photo

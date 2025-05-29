@@ -53,7 +53,7 @@ function onItemClick(item: Item) {
                     variant="text"
                     :active="route.name === item.routeName"
                     :color="item.danger ? 'error' : undefined"
-                    class="flex justify-start text-none cursor-pointer h-12 min-w-0 w-full"
+                    class="flex justify-start normal-case cursor-pointer h-12 min-w-0 w-full"
                 >
                     <div class="flex gap-4 items-center">
                         <v-icon v-if="item.icon" :icon="item.icon" size="24"/>

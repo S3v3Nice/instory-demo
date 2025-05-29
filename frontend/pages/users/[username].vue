@@ -60,7 +60,7 @@ const isPostsLoading = computed(() => postsStatus.value === 'idle' || postsStatu
                                     <v-btn
                                         color="var(--surface-light-color)"
                                         variant="flat"
-                                        class="text-none font-semibold cursor-pointer"
+                                        class="normal-case font-semibold cursor-pointer"
                                         size="small"
                                     >
                                         Edit profile
@@ -83,9 +83,9 @@ const isPostsLoading = computed(() => postsStatus.value === 'idle' || postsStatu
                                     <span class="opacity-60">following</span>
                                 </span>
                             </div>
-                            <p class="max-sm:hidden text-sm font-semibold">{{ user.first_name }} {{
-                                    user.last_name
-                                }}</p>
+                            <p class="max-sm:hidden text-sm font-semibold">
+                                {{ user.first_name }} {{user.last_name }}
+                            </p>
                         </div>
                     </div>
 
@@ -116,16 +116,33 @@ const isPostsLoading = computed(() => postsStatus.value === 'idle' || postsStatu
                     <div v-else-if="posts && posts.length" class="grid grid-cols-3 gap-1 mt-4">
                         <NuxtLink
                             v-for="post in posts"
-                            :to="{name: 'posts-id', params: {id: post.id}}"
+                            :to="{ name: 'posts-id', params: { id: post.id } }"
                             :key="post.id"
-                            class="relative w-full overflow-hidden cursor-pointer hover:brightness-50 transition"
+                            class="relative w-full overflow-hidden cursor-pointer group"
                             style="aspect-ratio: 3 / 4;"
                         >
+                            <!-- Картинка -->
                             <img
                                 :src="post.image"
                                 alt="Post image"
                                 class="absolute inset-0 w-full h-full object-cover"
                             />
+
+                            <div
+                                class="absolute inset-0 bg-black/65 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
+                            <div
+                                class="absolute flex inset-0 opacity-0 group-hover:opacity-100 items-center justify-center gap-6 transition-opacity  text-white"
+                            >
+                                <div class="flex items-center gap-1">
+                                    <v-icon size="24">mdi-heart</v-icon>
+                                    <span class="font-semibold">{{ post.likes_count }}</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <v-icon size="24">mdi-comment</v-icon>
+                                    <span class="font-semibold">{{ post.comments_count }}</span>
+                                </div>
+                            </div>
                         </NuxtLink>
                     </div>
                     <div v-else class="text-center opacity-60 mt-4">No posts yet.</div>

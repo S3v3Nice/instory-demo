@@ -23,7 +23,11 @@ const isPostLoading = computed(() => postStatus.value === 'pending')
 <template>
     <div class="flex justify-center min-h-[100px] items-center">
         <div class="sm:p-4 max-w-5xl w-full flex flex-col gap-2">
-            <div v-if="isPostLoading">Loading...</div>
+            <v-progress-circular
+                v-if="isPostLoading"
+                indeterminate
+                class="self-center justify-self-center min-h-[80vh]"
+            />
             <div v-else-if="post" class="flex max-sm:flex-col items-stretch sm:min-h-[450px] justify-center">
                 <div class="flex items-center gap-2 p-4 sm:hidden">
                     <UserLink :user="post.user">
@@ -52,10 +56,49 @@ const isPostLoading = computed(() => postStatus.value === 'pending')
                         </UserLink>
                     </div>
                     {{ post.description }}
+                    <div class="flex gap-4">
+                        <div class="flex -ml-2 items-center">
+                            <v-btn
+                                :icon="post!.is_liked ? 'mdi-heart' : 'mdi-heart-outline'"
+                                variant="text"
+                                :color="post!.is_liked ? 'red' : 'grey'"
+                                width="40"
+                                height="40"
+                                class="cursor-pointer"
+                            />
+                            <p class="text-center font-semibold text-sm">{{ post.likes_count }}</p>
+                        </div>
+                        <div class="flex items-center">
+                            <v-btn
+                                icon="mdi-comment-outline"
+                                variant="text"
+                                color="grey"
+                                width="40"
+                                height="40"
+                                class="cursor-pointer"
+                            />
+                            <p class="text-center font-semibold text-sm">{{ post.comments_count }}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div v-else>
-                Post not found!
+            <div v-else class="flex flex-col items-center justify-center min-h-[80vh] text-center px-4">
+                <div class="p-6 max-w-md w-full flex flex-col items-center gap-2">
+                    <v-icon size="64" color="error">mdi-magnify-remove-outline</v-icon>
+                    <p class="text-2xl font-semibold">Post not found</p>
+                    <p class="opacity-80">
+                        Maybe this post has been deleted or the link is broken.
+                    </p>
+                    <NuxtLink :to="{name: 'index'}">
+                        <v-btn
+                            color="primary"
+                            variant="tonal"
+                            class="mt-4 w-full cursor-pointer"
+                        >
+                            Home
+                        </v-btn>
+                    </NuxtLink>
+                </div>
             </div>
         </div>
     </div>

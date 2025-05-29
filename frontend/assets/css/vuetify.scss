@@ -1,4 +1,5 @@
 @use 'vuetify/settings' with (
   $layers: true,
   $reset: false,
+  $utilities: false,
 );

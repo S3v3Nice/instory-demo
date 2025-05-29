@@ -110,7 +110,7 @@ function onPostCreateClick() {
                     >
                         <v-btn
                             variant="text"
-                            class="flex xl:justify-start text-none cursor-pointer h-12 max-xl:px-0 min-w-0 w-full"
+                            class="flex xl:justify-start normal-case cursor-pointer h-12 max-xl:px-0 min-w-0 w-full"
                         >
                             <div class="flex gap-4 items-center">
                                 <Avatar v-if="item.avatar" :user="authStore.user" :size="24"></Avatar>
@@ -129,7 +129,7 @@ function onPostCreateClick() {
                             <v-btn
                                 v-bind="props"
                                 variant="text"
-                                class="flex xl:justify-start text-none cursor-pointer h-12 max-xl:px-0 min-w-0 w-full"
+                                class="flex xl:justify-start normal-case cursor-pointer h-12 max-xl:px-0 min-w-0 w-full"
                             >
                                 <div class="flex gap-4 items-center">
                                     <v-icon icon="mdi-menu" size="24"/>
@@ -163,7 +163,7 @@ function onPostCreateClick() {
                 v-if="!authStore.isAuthenticated"
                 color="primary"
                 variant="flat"
-                class="flex xl:justify-start text-none cursor-pointer h-12 mt-2 max-xl:px-0 min-w-0 w-full"
+                class="flex xl:justify-start normal-case cursor-pointer h-12 mt-2 max-xl:px-0 min-w-0 w-full"
                 @click="modalStore.authModal = true"
             >
                 <div class="flex gap-4 items-center">

@@ -87,7 +87,7 @@ async function submitLogin() {
                     </v-checkbox>
                     <v-btn
                         variant="text"
-                        class="cursor-pointer text-none -mr-4 max-sm:text-sm"
+                        class="cursor-pointer normal-case -mr-4 max-sm:text-sm"
                         @click="emit('switch-to-forgot-password')"
                     >
                         Forgot password?
@@ -107,7 +107,7 @@ async function submitLogin() {
                 <v-btn
                     block
                     variant="text"
-                    class="cursor-pointer text-none mt-1"
+                    class="cursor-pointer normal-case mt-1"
                     @click="emit('switch-to-register')"
                 >
                     Don't have an account?

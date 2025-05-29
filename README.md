@@ -28,9 +28,8 @@ The database is PostgreSQL.
 
 ## Features still in progress
 
-- Displaying a single post with its description, comments, and likes, etc.
-- Creating post comments
 - Liking posts
+- Creating post comments
 - Following on users
 - User searching
 - Post feed
@@ -67,7 +66,7 @@ http://localhost:8025.
 
 ### Stop the app
 
-To stop the service, run:
+To stop the app, run:
 
 ```sh
 make down

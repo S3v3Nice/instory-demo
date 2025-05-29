@@ -40,11 +40,11 @@ function onConfirm() {
             <p class="text-center opacity-70 mx-2">{{ description }}</p>
         </slot>
         <div class="flex flex-col mt-6">
-            <v-btn color="primary" variant="text" height="3rem" class="border-t cursor-pointer text-none"
+            <v-btn color="primary" variant="text" height="3rem" class="border-t cursor-pointer normal-case"
                    @click="onConfirm">
                 {{ confirmBtn }}
             </v-btn>
-            <v-btn variant="text" height="3rem" class="border-t cursor-pointer text-none" @click="onCancel">
+            <v-btn variant="text" height="3rem" class="border-t cursor-pointer normal-case" @click="onCancel">
                 {{ cancelBtn }}
             </v-btn>
         </div>

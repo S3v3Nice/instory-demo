@@ -61,7 +61,7 @@ async function submit() {
                     color="primary"
                     variant="tonal"
                     prepend-icon="mdi-home"
-                    class="flex text-none cursor-pointer max-xl:px-0 min-w-0 w-full mt-6"
+                    class="flex normal-case cursor-pointer max-xl:px-0 min-w-0 w-full mt-6"
                 >
                     Go Home
                 </v-btn>
