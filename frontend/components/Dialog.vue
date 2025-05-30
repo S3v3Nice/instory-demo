@@ -9,15 +9,15 @@ defineProps({
         type: Boolean,
         default: true,
     },
-    rounded: {
-        type: [String],
-        default: '3xl',
+    veryRounded: {
+        type: Boolean,
+        default: true
     },
     maxWidth: {
         type: [String, Number],
         default: '600',
     },
-    fullWidth: {
+    fullMobileWidth: {
         type: Boolean,
         default: true,
     }
@@ -33,9 +33,9 @@ watch(isOpen, (isOpen) => {
 </script>
 
 <template>
-    <v-dialog v-model="isOpen" :max-width="maxWidth" :width="fullWidth ? '100%' : undefined">
+    <v-dialog v-model="isOpen" :max-width="maxWidth" :width="fullMobileWidth ? '100%' : undefined">
         <template v-slot:default="{ isActive }">
-            <v-card :class="`rounded-${rounded}`">
+            <v-card :class="veryRounded ? 'rounded-3xl' : 'rounded-lg'">
                 <v-card-title
                     v-if="backBtn || title || closeBtn"
                     class="relative h-[3rem]"

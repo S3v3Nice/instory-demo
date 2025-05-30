@@ -32,7 +32,7 @@ function onConfirm() {
 </script>
 
 <template>
-    <Dialog v-model="isOpen" :close-btn="false" :full-mobile-width="false" max-width="500" rounded="lg">
+    <Dialog v-model="isOpen" :close-btn="false" :full-mobile-width="false" max-width="500" :very-rounded="false">
         <slot name="title">
             <p class="text-center text-lg mt-5">{{ title }}</p>
         </slot>
